@@ -1,0 +1,24 @@
+<head>
+	<title>Rezerwuj</title>
+</head>
+
+<body>
+	{{>booking}}
+</body>
+
+<template name="booking">
+	<table width="100%">
+		<tr>
+			<td>{{> month}}<td>
+			<td width="30%">{{> day}}</td>
+		</tr>
+	</table>
+</template>
+
+<template name="month">
+	<div id="monthCal"></div>
+</template>
+
+<template name="day">
+	<div id="dayCal"></div>
+</template>

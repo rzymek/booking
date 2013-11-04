@@ -1,0 +1,7 @@
+/* CSS declarations go here */
+.fc-day {
+	background-size: 100% 100%;
+}
+.fc-day[data-date="2013-11-21"] {
+	/*border: solid 3px red;*/
+}

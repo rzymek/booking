@@ -7,7 +7,7 @@ Meteor.methods({
         Events.insert({
             user: this.userId,
             start: start
-        });
+        });        
     },
     reset: function() {
         Events.remove({});

@@ -87,12 +87,22 @@ Template.day.rendered = function() {
                 var minute = minuteOfDay % 60;
                 var start = moment([data.year, data.month, data.day, hour, minute]);
                 return {
-                    title: '',                    
+                    title: '',
                     start: start.toDate(),
-                    allDay: false
+                    allDay: false,
                 }
             });
             callback(events);
+
+//            var ctx = canvas.getContext('2d');
+//            canvas.width = 10;
+//            canvas.height = workingHours.dayEnd - workingHours.dayStart;
+//            ctx.fillStyle = 'rgba(250,0,0,0.5)';
+//
+//            ctx.fillRect(0,
+//                    (minuteOfDay) / 60.0 - workingHours.dayStart,
+//                    canvas.width, 
+//                    SLOT_MIN / 60.0);
         },
         select: function(start) {
             Meteor.call('addEvent', start);

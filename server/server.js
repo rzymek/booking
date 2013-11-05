@@ -4,6 +4,8 @@ Meteor.publish("events", function() {
 
 Meteor.methods({
     addEvent: function(start) {
+//        var db = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection('events');
+//        db.findAndModify()
         Events.insert({
             user: this.userId,
             start: start
@@ -13,10 +15,3 @@ Meteor.methods({
         Events.remove({});
     }
 });
-
-//Events.deny({
-//    insert: function(userId, event) {
-//        event.user = userId;
-//        return true;
-//    }
-//});

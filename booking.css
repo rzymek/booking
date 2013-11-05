@@ -5,6 +5,11 @@
 .fc-other-month,.fc-day-header{
 	background-image: none !important;
 }
+/*
+.fc-day-header {
+	background-image: none !important;
+}
+*/
 .fc-day[data-date="2013-11-21"] {
 	/*border: solid 3px red;*/
 }

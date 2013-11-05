@@ -35,7 +35,6 @@ Template.month.rendered = function() {
 };
 
 var canvas = document.createElement('canvas');
-
 function hoursToDataURL(arr) {
     if (arr == null || arr.length == 0)
         return 'none';
@@ -75,8 +74,27 @@ Template.day.rendered = function() {
             center: '',
             right: ''
         },
+        editable: false,
         axisFormat: 'H:mm',
-        defaultView: 'agendaDay'
+        defaultView: 'agendaDay',
+        selectable: true,
+        slotMinutes: 15,
+        //selectHelper: true,
+        select: function(start, end) {
+            var event = {
+                title: '',
+                start: start,
+                end: function() {
+                    var end = new Date(start);
+                    end.setMinutes(start.getMinutes() + 15);
+                    return end;
+                }(),
+                allDay: false
+            };
+            console.log(event);
+            cal.fullCalendar('renderEvent', event, true);
+            cal.fullCalendar('unselect');
+        }
     }, localOptions));
 
     Deps.autorun(function() {

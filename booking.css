@@ -1,7 +1,11 @@
 /* CSS declarations go here */ 
 .fc-day { 
 	background-size: 100% 100%;
+	background-color: #fafafa;
 } 
+.fc-other-month {
+	background-color: #fff !important;	
+}
 .fc-other-month,.fc-day-header{  
 	background-image: none !important;
 }

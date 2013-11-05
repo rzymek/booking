@@ -4,7 +4,7 @@ var workingHours = {
   wed: [8, 19], 
   thu: [9, 18],
   fri: [9, 17],
-  dayStart: 6,
+  dayStart: 7,
   dayEnd: 20
 };
 
@@ -69,6 +69,7 @@ Template.day.rendered = function () {
       day: 'dddd d.MM'
     },
     allDaySlot: false,
+    firstHour: workingHours.dayStart,
     header: {
       left: '',
       center: '',

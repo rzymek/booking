@@ -78,13 +78,17 @@ Template.day.rendered = function() {
         axisFormat: 'H:mm',
         defaultView: 'agendaDay',
         selectable: true,
-        slotMinutes: 15,
-        defaultEventMinutes: 15,
+        slotMinutes: SLOT_MIN,
+        defaultEventMinutes: SLOT_MIN,
         events: function(start, end, callback) {
             var events = Events.find().map(function(data) {
+                var minuteOfDay = data.slot * SLOT_MIN;
+                var hour = minuteOfDay / 60;
+                var minute = minuteOfDay % 60;
+                var start = moment([data.year, data.month, data.day, hour, minute]);
                 return {
-                    title: '',
-                    start: data.start,
+                    title: '',                    
+                    start: start.toDate(),
                     allDay: false
                 }
             });

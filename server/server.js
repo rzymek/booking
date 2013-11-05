@@ -3,13 +3,18 @@ Meteor.publish("events", function() {
 });
 
 Meteor.methods({
-    addEvent: function(start) {
+    addEvent: function(timestamp) {
 //        var db = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection('events');
 //        db.findAndModify()
-        Events.insert({
+        var start = moment(timestamp);
+        var minuteOfDay = start.hour()*60 + start.minute();
+        var id = Events.insert({
             user: this.userId,
-            start: start
-        });        
+            year: start.year(),
+            month: start.month(),
+            day: start.date(),
+            slot: minuteOfDay / SLOT_MIN
+        });
     },
     reset: function() {
         Events.remove({});

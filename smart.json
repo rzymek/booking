@@ -1,5 +1,6 @@
 {
   "packages": {
-    "fullcalendar": {}
+    "fullcalendar": {},
+    "moment": {}
   }
 }

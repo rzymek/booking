@@ -80,14 +80,20 @@ Template.day.rendered = function() {
         selectable: true,
         slotMinutes: 15,
         defaultEventMinutes: 15,
+        events: function(start, end, callback) {
+            var events = Events.find().map(function(data) {
+                return {
+                    title: '',
+                    start: data.start,
+                    allDay: false
+                }
+            });
+            callback(events);
+        },
         select: function(start) {
-            var event = {
-                title: '',
-                start: start,
-                allDay: false
-            };
-            console.log(event);
-            cal.fullCalendar('renderEvent', event, true);
+            Events.insert({
+                start: start
+            });
             cal.fullCalendar('unselect');
         }
     }, localOptions));
@@ -97,4 +103,31 @@ Template.day.rendered = function() {
     });
 
     Deps.autorun(showWorkingHours);
+    Meteor.subscribe("events");
+    Deps.autorun(function() {
+        var events = Events.find();
+        console.log(events.fetch())
+        $('#dayCal').fullCalendar('refetchEvents');
+    });
 };
+
+//Meteor.startup(function() {
+//    Events.find().observe({
+//        added: function(data) {
+//            console.log('added',data)
+//            var cal = $('#dayCal');
+//            var event = {
+//                title: '',
+//                start: data.start,
+//                allDay: false
+//            };
+//            cal.fullCalendar('renderEvent', event, true);
+//        },
+//        removed: function(data){
+//            console.log("removed",data);
+//        },
+//        changed: function(data){
+//            console.log("change",data);
+//        }
+//    });
+//});

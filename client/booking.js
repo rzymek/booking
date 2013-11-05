@@ -91,9 +91,7 @@ Template.day.rendered = function() {
             callback(events);
         },
         select: function(start) {
-            Events.insert({
-                start: start
-            });
+            Meteor.call('addEvent', start);
             cal.fullCalendar('unselect');
         }
     }, localOptions));

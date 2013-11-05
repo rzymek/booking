@@ -1,15 +1,22 @@
 Meteor.publish("events", function() {
-   return Events.find(); 
-});
-Meteor.methods({
-   reset: function() {
-       Events.remove({});
-   } 
+    return Events.find();
 });
 
-Events.allow({
-    insert: function(userId, event) {
-        event.user = userId;
-        return true;
+Meteor.methods({
+    addEvent: function(start) {
+        Events.insert({
+            user: this.userId,
+            start: start
+        });
+    },
+    reset: function() {
+        Events.remove({});
     }
 });
+
+//Events.deny({
+//    insert: function(userId, event) {
+//        event.user = userId;
+//        return true;
+//    }
+//});

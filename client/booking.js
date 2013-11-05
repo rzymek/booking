@@ -34,7 +34,7 @@ Template.month.rendered = function () {
 }
 
 function getDynamicStyleSheet() {
-  var sheets = document.styleSheets;
+  var sheets = document.head.getElementsByTagName('style');
   for(var i=0;i<sheets.length;i++) {
     if(sheets[i].title === 'dynamic') {
       return sheets[i];
@@ -52,11 +52,9 @@ function showWorkingHours() {
       ctx.fillRect(0, 8, c.width, 23-8);
       var data = c.toDataURL();
       // $('.fc-day[data-date="2013-11-21"]').css('background-image', "url('"+data+"')"); 
-      css = getDynamicStyleSheet();
-      while(css.rules.length > 0) {
-        css.removeRule(0);
-      }
-      css.insertRule(".fc-wed { background-image: url('"+data+"') }",0);
+      var styles = document.head.getElementsByTagName('style');
+      var css = styles[styles.length-1];
+      css.textContent = ".fc-wed { background-image: url('"+data+"') }";
 }
 
 Template.day.rendered = function () {

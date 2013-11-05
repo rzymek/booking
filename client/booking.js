@@ -1,9 +1,9 @@
 var workingHours = {
   mon: [],
   tue: [8, 16],
-  wed: [[8, 10], [12, 18]],
-  fri: ['8:15', 17]
-}
+  wed: [8,19],
+  fri: [9, 17]
+};
 
 var localOptions = {
   buttonText: {
@@ -17,43 +17,45 @@ var localOptions = {
   dayNames: ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'],
   dayNamesShort: ['Nie', 'Pon', 'Wto', 'Śro', 'Czw', 'Pią', 'Sob'],
   firstDay: 1
-}
+};
 Template.month.rendered = function () {
-  
   var cal = $('#monthCal');
   cal.fullCalendar($.extend({
     windowResize: function (view) {
-      Session.set('height', cal.height())
+      Session.set('height', cal.height());
     },
     dayClick: function () {
       console.log(this);
     }
   }, localOptions));
-  Session.set('height', cal.height())
-}
+  Session.set('height', cal.height());
+};
 
-function getDynamicStyleSheet() {
-  var sheets = document.head.getElementsByTagName('style');
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].title === 'dynamic') {
-      return sheets[i];
-    }
-  }
+var canvas = document.createElement('canvas');
+function hoursToDataURL(arr) {
+  if(arr == null || arr.length == 0)
+    return 'none';
+  var ctx = canvas.getContext('2d');
+  canvas.width = 10;
+  canvas.height = 24;
+  ctx.fillStyle = 'rgba(100,255,100,0.5)';
+  ctx.fillRect(0, arr[0], canvas.width, arr[1]-arr[0]);
+  return "url('"+canvas.toDataURL()+"')";  
 }
 
 function showWorkingHours() {
   console.log('showWorkingHours');
-  var c = document.createElement('canvas');
-  var ctx = c.getContext('2d');
-  c.width = 10;
-  c.height = 24;
-  ctx.fillStyle = 'rgba(100,255,100,0.5)';
-  ctx.fillRect(0, 8, c.width, 23 - 8);
-  var data = c.toDataURL();
   // $('.fc-day[data-date="2013-11-21"]').css('background-image', "url('"+data+"')"); 
   var styles = document.head.getElementsByTagName('style');
   var css = styles[styles.length - 1];
-  css.textContent = ".fc-wed,.fc-mon { background-image: url('" + data + "') }";
+  
+  var s='';
+  for(var key in workingHours) {
+    console.log(key);
+    var data = hoursToDataURL(workingHours[key]);
+    s+='#monthCal .fc-'+key+" { background-image: "+data+" }\n";
+  }
+  css.textContent = s;
 }
 
 Template.day.rendered = function () {
@@ -77,4 +79,4 @@ Template.day.rendered = function () {
   });
   
   Deps.autorun(showWorkingHours);
-}
+};

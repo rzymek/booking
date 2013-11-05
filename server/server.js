@@ -8,13 +8,20 @@ Meteor.methods({
 //        db.findAndModify()
         var start = moment(timestamp);
         var minuteOfDay = start.hour()*60 + start.minute();
-        var id = Events.insert({
+        var slot = minuteOfDay / SLOT_MIN;
+        var data = {
             user: this.userId,
             year: start.year(),
             month: start.month(),
             day: start.date(),
-            slot: minuteOfDay / SLOT_MIN
-        });
+            slot: slot
+        };
+        var id = Events.insert(data);
+        delete data.user;
+        if(Events.find(data).count() > 1) {
+            console.log("double booking");
+            Events.remove(id);
+        }
     },
     reset: function() {
         Events.remove({});

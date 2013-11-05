@@ -93,16 +93,6 @@ Template.day.rendered = function() {
                 }
             });
             callback(events);
-
-//            var ctx = canvas.getContext('2d');
-//            canvas.width = 10;
-//            canvas.height = workingHours.dayEnd - workingHours.dayStart;
-//            ctx.fillStyle = 'rgba(250,0,0,0.5)';
-//
-//            ctx.fillRect(0,
-//                    (minuteOfDay) / 60.0 - workingHours.dayStart,
-//                    canvas.width, 
-//                    SLOT_MIN / 60.0);
         },
         select: function(start) {
             Meteor.call('addEvent', start);
@@ -114,7 +104,7 @@ Template.day.rendered = function() {
         cal.fullCalendar('option', 'contentHeight', Session.get('height'));
     });
 
-    Deps.autorun(showWorkingHours);
+//    Deps.autorun(showWorkingHours);
     Meteor.subscribe("events");
     Deps.autorun(function() {
         Events.find();
@@ -122,23 +112,30 @@ Template.day.rendered = function() {
     });
 };
 
-//Meteor.startup(function() {
-//    Events.find().observe({
-//        added: function(data) {
-//            console.log('added',data)
-//            var cal = $('#dayCal');
-//            var event = {
-//                title: '',
-//                start: data.start,
-//                allDay: false
-//            };
-//            cal.fullCalendar('renderEvent', event, true);
-//        },
-//        removed: function(data){
-//            console.log("removed",data);
-//        },
-//        changed: function(data){
-//            console.log("change",data);
-//        }
-//    });
-//});
+Meteor.startup(function() {
+    Events.find().observe({
+        added: function(data) {
+            var minuteOfDay = data.slot * SLOT_MIN;
+            
+            var ctx = canvas.getContext('2d');
+            canvas.width = 10;
+            canvas.height = workingHours.dayEnd - workingHours.dayStart;
+            ctx.fillStyle = 'rgba(250,0,0,0.5)';
+
+            ctx.fillRect(0,
+                    (minuteOfDay) / 60.0 - workingHours.dayStart,
+                    canvas.width, 
+                    SLOT_MIN / 60.0);
+            var imgData = "url('" + canvas.toDataURL() + "')";
+            var styles = document.head.getElementsByTagName('style');
+            var css = styles[styles.length - 1];
+            css.textContent = "";
+        },
+        removed: function(data){
+            console.log("removed",data);
+        },
+        changed: function(data){
+            console.log("change",data);
+        }
+    });
+});

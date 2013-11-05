@@ -33,6 +33,32 @@ Template.month.rendered = function () {
     Session.set('height', cal.height())
 }
 
+function getDynamicStyleSheet() {
+  var sheets = document.styleSheets;
+  for(var i=0;i<sheets.length;i++) {
+    if(sheets[i].title === 'dynamic') {
+      return sheets[i];
+    }
+  }
+}
+
+function showWorkingHours() {
+      console.log('showWorkingHours');
+      var c = document.createElement('canvas');
+      var ctx = c.getContext('2d');
+      c.width = 10;
+      c.height = 24;
+      ctx.fillStyle = 'rgba(100,255,100,0.5)'  ;
+      ctx.fillRect(0, 8, c.width, 23-8);
+      var data = c.toDataURL();
+      // $('.fc-day[data-date="2013-11-21"]').css('background-image', "url('"+data+"')"); 
+      css = getDynamicStyleSheet();
+      while(css.rules.length > 0) {
+        css.removeRule(0);
+      }
+      css.insertRule(".fc-wed { background-image: url('"+data+"') }",0);
+}
+
 Template.day.rendered = function () {
     var cal = $('#dayCal');
     cal.fullCalendar($.extend({
@@ -47,15 +73,5 @@ Template.day.rendered = function () {
         cal.fullCalendar('option','contentHeight', Session.get('height'));
     });
 
-    Deps.autorun(function(){
-      var c = document.createElement('canvas');
-      var ctx = c.getContext('2d');
-      c.width = 10;
-      c.height = 24;
-      ctx.fillStyle = 'rgba(100,255,100,0.5)'  ;
-      ctx.fillRect(0, 8, c.width, 23-8);
-      var data = c.toDataURL();
-      // $('.fc-day[data-date="2013-11-21"]').css('background-image', "url('"+data+"')"); 
-      $('.fc-wed.fc-day').not('.fc-other-month').css('background-image', "url('"+data+"')"); 
-    });
+    Deps.autorun(showWorkingHours);
 }

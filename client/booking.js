@@ -79,16 +79,11 @@ Template.day.rendered = function() {
         defaultView: 'agendaDay',
         selectable: true,
         slotMinutes: 15,
-        //selectHelper: true,
-        select: function(start, end) {
+        defaultEventMinutes: 15,
+        select: function(start) {
             var event = {
                 title: '',
                 start: start,
-                end: function() {
-                    var end = new Date(start);
-                    end.setMinutes(start.getMinutes() + 15);
-                    return end;
-                }(),
                 allDay: false
             };
             console.log(event);

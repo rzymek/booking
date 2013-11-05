@@ -9,7 +9,6 @@ Meteor.methods({
 
 Events.allow({
     insert: function(userId, event) {
-        console.log('allow', event);
         event.user = userId;
         return true;
     }

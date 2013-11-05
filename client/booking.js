@@ -36,12 +36,12 @@ Template.month.rendered = function() {
 
 var canvas = document.createElement('canvas');
 function hoursToDataURL(arr) {
-    if (arr == null || arr.length == 0)
+    if (arr === null || arr.length === 0)
         return 'none';
     var ctx = canvas.getContext('2d');
     canvas.width = 10;
     canvas.height = workingHours.dayEnd - workingHours.dayStart;
-    ctx.fillStyle = 'rgba(100,255,100,0.5)';
+    ctx.fillStyle = 'rgba(180,180,180,0.5)';
     ctx.fillRect(0, arr[0] - workingHours.dayStart, canvas.width, arr[1] - arr[0]);
     return "url('" + canvas.toDataURL() + "')";
 }
@@ -105,8 +105,7 @@ Template.day.rendered = function() {
     Deps.autorun(showWorkingHours);
     Meteor.subscribe("events");
     Deps.autorun(function() {
-        var events = Events.find();
-        console.log(events.fetch())
+        Events.find();
         $('#dayCal').fullCalendar('refetchEvents');
     });
 };

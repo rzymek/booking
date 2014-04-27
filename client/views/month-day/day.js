@@ -1,5 +1,5 @@
 Template.day.rendered = function() {
-    dayCal = $('#dayCal');
+    var dayCal = $('#dayCal');
     dayCal.fullCalendar($.extend({
         columnFormat: {
             day: 'dddd d.MM'
@@ -11,7 +11,7 @@ Template.day.rendered = function() {
             center: '',
             right: ''
         },
-        dayClick: function(date){
+        dayClick: function(date) {
             Meteor.call('addEvent', date);
         },
         editable: false,
@@ -36,8 +36,19 @@ Template.day.rendered = function() {
         }
     }, FC_PL_OPTIONS));
 
+    var slotHeight = dayCal.find('.fc-slot0').outerHeight();
+    dayCal.find('div').filter(function() {
+        return $(this).css('overflow-y') == 'auto';
+    }).scroll(function() {
+        var top = this.scrollTop;
+        var startSlot = Math.ceil(top / slotHeight);
+        Session.set('visibleHours.start', startSlot);
+    });
+
     Deps.autorun(function() {
         dayCal.fullCalendar('option', 'contentHeight', Session.get('height'));
+        var visibleSlots = Math.ceil(dayCal.height() / slotHeight);
+        Session.set('visibleHours.height', visibleSlots);
     });
 
     Meteor.subscribe("events");

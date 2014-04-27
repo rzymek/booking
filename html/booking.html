@@ -4,14 +4,14 @@
 </head>
 
 <body> 
-        <div style="text-align:right">{{loginButtons align="right"}}</div>
+        <div style="text-align:right">{{>loginButtons align="right"}}</div>
 	{{>booking}}
 </body>
 
 <template name="booking">
 	<table width="100%">
 		<tr>
-			<td>{{> month}}<td>
+			<td>{{> month}}</td>
 			<td width="30%">{{> day}}</td>
 		</tr>
 	</table>

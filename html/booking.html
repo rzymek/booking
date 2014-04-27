@@ -1,26 +1,27 @@
 <head>
-	<title>Rezerwuj</title>
-	<style type="text/css"></style>
+    <title>Rezerwuj</title>
+    <style type="text/css"></style>
 </head>
 
 <body> 
-        <div style="text-align:right">{{>loginButtons align="right"}}</div>
-	{{>booking}}
+    <div style="text-align:right">{{>loginButtons align="right"}}</div>
+    {{>booking}}
 </body>
 
 <template name="booking">
-	<table width="100%">
-		<tr>
-			<td>{{> month}}</td>
-			<td width="30%">{{> day}}</td>
-		</tr>
-	</table>
+    <table width="100%">
+        <tr>
+            <td>{{> month}}</td>
+            <td width="30%">{{> day}}</td>
+        </tr>
+    </table>
+    {{show 'visibleMonth'}}
 </template>
 
 <template name="month">
-	<div id="monthCal"></div>
+    <div id="monthCal"></div>
 </template>
 
 <template name="day">
-	<div id="dayCal"></div>
+    <div id="dayCal"></div>
 </template>

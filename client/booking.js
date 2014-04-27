@@ -21,17 +21,63 @@ var localOptions = {
     dayNamesShort: ['Nie', 'Pon', 'Wto', 'Śro', 'Czw', 'Pią', 'Sob'],
     firstDay: 1
 };
+var monthCal = undefined;
+var dayCal = undefined;
+Template.month.destroyed = function() {
+    Session.set('visibleMonth', null);
+};
 Template.month.rendered = function() {
-    var cal = $('#monthCal');
-    cal.fullCalendar($.extend({
+    monthCal = $('#monthCal');
+    monthCal.fullCalendar($.extend({
         windowResize: function(view) {
-            Session.set('height', cal.height());
+            Session.set('height', monthCal.height());
         },
-        dayClick: function() {
-            console.log(this);
+        viewRender: function(view) {
+            with (moment(view.start)) {
+                Session.set('visibleMonth', {
+                    month: month(),
+                    year: year()
+                });
+            }
+        },
+        dayClick: function(date) {
+            dayCal.fullCalendar('gotoDate', date);
         }
-    }, localOptions));
-    Session.set('height', cal.height());
+    }, localOptions));    
+    Session.set('height', monthCal.height());
+    
+    Deps.autorun(function() {
+        var visible = Session.get('visibleMonth');
+        if (!visible)
+            return;
+        var days = Events.find({month: visible.month, year: visible.year}, {
+            sort: {day: 1}
+        }).fetch().reduce(function(days, event) {
+            var day = days[event.day] || [];
+            day.push(event.slot);
+            days[event.day] = day;
+            return days;
+        }, {});
+        var date = moment(Session.get('visibleMonth'));
+        _.keys(days).forEach(function(day) {
+            var ctx = canvas.getContext('2d');
+            canvas.width = 1;
+            canvas.height = workingHours.dayEnd - workingHours.dayStart;
+            ctx.fillStyle = 'rgba(250,0,0,0.5)';
+
+            days[day].forEach(function(slot) {
+                var minuteOfDay = slot * SLOT_MIN;
+                ctx.fillRect(0,
+                        (minuteOfDay) / 60.0 - workingHours.dayStart,
+                        canvas.width,
+                        SLOT_MIN / 60.0);
+            });
+            var imgData = "url('" + canvas.toDataURL() + "')";
+            date.date(day);
+            var cell = $("td.fc-day[data-date='" + date.format('YYYY-MM-DD') + "']")[0];
+            cell.style.backgroundImage = imgData;
+        });
+    });
 };
 
 var canvas = document.createElement('canvas');
@@ -62,8 +108,8 @@ function showWorkingHours() {
 }
 
 Template.day.rendered = function() {
-    var cal = $('#dayCal');
-    cal.fullCalendar($.extend({
+    dayCal = $('#dayCal');
+    dayCal.fullCalendar($.extend({
         columnFormat: {
             day: 'dddd d.MM'
         },
@@ -89,19 +135,19 @@ Template.day.rendered = function() {
                 return {
                     title: '',
                     start: start.toDate(),
-                    allDay: false,
-                }
+                    allDay: false
+                };
             });
             callback(events);
         },
         select: function(start) {
             Meteor.call('addEvent', start);
-            cal.fullCalendar('unselect');
+            dayCal.fullCalendar('unselect');
         }
     }, localOptions));
 
     Deps.autorun(function() {
-        cal.fullCalendar('option', 'contentHeight', Session.get('height'));
+        dayCal.fullCalendar('option', 'contentHeight', Session.get('height'));
     });
 
 //    Deps.autorun(showWorkingHours);
@@ -111,12 +157,22 @@ Template.day.rendered = function() {
         $('#dayCal').fullCalendar('refetchEvents');
     });
 };
+function getVisibleDate(cal) {
+    with (moment(cal.fullCalendar('getDate'))) {
+        return {
+            month: month(),
+            year: year()
+        };
+    }
+}
 
 Meteor.startup(function() {
     Events.find().observe({
         added: function(data) {
             var minuteOfDay = data.slot * SLOT_MIN;
-            
+            var visibleDate = getVisibleDate(monthCal);
+            if (!(data.year === visibleDate.year && data.month === visibleDate.month))
+                return;
             var ctx = canvas.getContext('2d');
             canvas.width = 10;
             canvas.height = workingHours.dayEnd - workingHours.dayStart;
@@ -124,18 +180,17 @@ Meteor.startup(function() {
 
             ctx.fillRect(0,
                     (minuteOfDay) / 60.0 - workingHours.dayStart,
-                    canvas.width, 
+                    canvas.width,
                     SLOT_MIN / 60.0);
             var imgData = "url('" + canvas.toDataURL() + "')";
-            var styles = document.head.getElementsByTagName('style');
-            var css = styles[styles.length - 1];
-            css.textContent = "";
+            var cell = $("td.fc-day[data-date='" + moment(data).format('YYYY-MM-DD') + "']")[0];
+            cell.style.backgroundImage = imgData;
         },
-        removed: function(data){
-            console.log("removed",data);
+        removed: function(data) {
+            console.log("removed", data);
         },
-        changed: function(data){
-            console.log("change",data);
+        changed: function(data) {
+            console.log("change", data);
         }
     });
 });

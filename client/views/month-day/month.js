@@ -1,3 +1,4 @@
+Session.set('month.view.ready', false);
 Template.month.rendered = function() {
     var monthCal = $('#monthCal');
     monthCal.fullCalendar($.extend({
@@ -13,18 +14,19 @@ Template.month.rendered = function() {
             }
         },
         dayClick: function(date) {
+            Session.set('selectedDay', date);
             $('#dayCal').fullCalendar('gotoDate', date);
         }
     }, FC_PL_OPTIONS));
     Session.set('height', monthCal.height());
 
 
-    function mergeSlotsByDay(days, event) {
+    mergeSlotsByDay = function (days, event) {
         var day = days[event.day] || [];
         day.push(event.slot);
         days[event.day] = day;
         return days;
-    }
+    };
     Deps.autorun(function() {
         var visible = Session.get('visibleMonth');
         if (!visible)
@@ -44,39 +46,7 @@ Template.month.rendered = function() {
             cell.style.backgroundImage = imgData;
         });
     });
-
-    Deps.autorun(function() {
-        var date = moment($('#dayCal').fullCalendar('getDate'));
-
-        var days = Events.find({month: date.month(), year: date.year(), day: date.date()})
-                .fetch().reduce(mergeSlotsByDay, {});
-
-        var slots = _.chain(days).values().first().value();
-        if (slots) {
-            clearDayBgCanvas();
-            slots.forEach(function(slot) {
-                return drawSlot(slot);
-            });
-        }
-
-        var start = Session.get('visibleHours.start');
-        var height = Session.get('visibleHours.height');
-
-        var minuteOfDay = start * SLOT_MIN;
-        var heightInMinutes = height * SLOT_MIN;
-        var ctx = getDayBgCtx();
-        ctx.fillStyle = 'rgba(0,0,250,0.5)';
-        ctx.fillRect(0,
-                (minuteOfDay / 60.0 - workingHours.dayStart)*100,
-                canvas.width,
-                (heightInMinutes / 60)*100
-        );
-          
-
-        var imgData = "url('" + getDayBGDataURL() + "')";
-        var cell = $("td.fc-day[data-date='" + date.format('YYYY-MM-DD') + "']")[0];
-        cell.style.backgroundImage = imgData;
-    });
+    Session.set('month.view.ready', true);
 };
 
 Template.month.destroyed = function() {

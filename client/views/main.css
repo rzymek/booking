@@ -1,19 +1,30 @@
 /* CSS declarations go here */ 
 .fc-day { 
-	background-size: 100% 100%;
-	background-color: #fafafa;
+    background-size: 100% 100%;
+    background-color: #fafafa;
+    position: relative;
+    overflow: hidden;
 } 
 .fc-other-month {
-	background-color: #fff !important;	
+    background-color: #fff !important;	
 }
 .fc-other-month,.fc-day-header{  
-	background-image: none !important;
+    background-image: none !important;
 }
 /*
 .fc-day-header { 
-	background-image: none !important;   
+        background-image: none !important;   
 }
-*/
 .fc-day[data-date="2013-11-21"] {
-	/*border: solid 3px red;*/
 } 
+*/
+
+#hour_view {
+    display:block;
+    background-color: rgba(0,0,255,0.5);
+    width: 100px;
+    height:100px;
+    top:0;
+    left:0;
+    position: absolute;
+}
